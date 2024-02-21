@@ -1,8 +1,10 @@
 require("dotenv").config();
 const express = require("express");
 const bcrypt = require("bcryptjs");
+var jwt = require("jsonwebtoken");
 const connectDatabase = require("./db");
 const User = require("./models/User");
+const authenticate = require("./middleware/authenticate");
 
 const app = express();
 const PORT = 4000;
@@ -55,10 +57,16 @@ app.post("/login", async (req, res, next) => {
 
     delete user._doc.password;
 
-    return res.status(200).json({ message: "Login successful!", user });
+    const token = jwt.sign(user._doc, "secret-key", { expiresIn: "1h" });
+    return res.status(200).json({ message: "Login successful!", token });
   } catch (e) {
     next(e);
   }
+});
+
+app.get("/private", authenticate, (req, res) => {
+  console.log(req.user);
+  return res.status(200).json({ message: "Iam private!" });
 });
 
 app.use((err, req, res, next) => {
