@@ -30,7 +30,7 @@ const loginService = async ({ email, password }) => {
     accountStatus: user.accountStatus,
   };
 
-  return jwt.sign(payload, "secret-key", { expiresIn: "20s" });
+  return jwt.sign(payload, "secret-key", { expiresIn: "1h" });
 };
 
 module.exports = {
